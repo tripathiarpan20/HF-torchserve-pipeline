@@ -1,0 +1,1 @@
+https://huggingface.co/transformers/v1.0.0/torchscript.html
