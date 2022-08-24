@@ -12,8 +12,8 @@ The `Using Torchserve Docker containers on EC2 for inference` section of [this N
 Within the AWS EC2 instance, navigate to the current folder after cloning this repo: 
 
 ```
-git clone 
-cd /HF-only
+git clone https://github.com/tripathiarpan20/HF-torchserve-pipeline
+cd HF-torchserve-pipeline/HF-only
 ```
 
 Create a Torchserve model archive along with relevant dependencies in `requirements.txt` (like 🤗 transformers).  
