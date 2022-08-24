@@ -1,10 +1,10 @@
-# HF-torchserver-scripted
+# HF-torchserve-pipeline
  
 This repository contains an example to deploy models with third-party dependencies (like 🤗 Transformers, sparseml etc) on Torchserve servers as ready-for-usage Docker containers on cloud services like AWS.  
 
 For the context of this repository, we would deploy the models on an AWS [`t2.micro`](https://aws.amazon.com/ec2/instance-types/) instance which can be used for free (for 750 hours) on a new AWS account. We work with a 🤗 BERT Transformer [model](https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion) for the task of sentiment analysis by using its [`pipeline`](https://huggingface.co/docs/transformers/main_classes/pipelines) feature, the handler code in `scripts` can also be used as a simplistic template to deploy an 🤗 `pipeline`.
 
-This work *may* also be extended to deploy the Torchserve Docker containers with HF models at scale with [AWS Cloudformation](https://github.com/pytorch/serve/tree/master/examples/cloudformation) as explained in the official Torchserve repo & [AWS Sagemaker](https://github.com/tescal2/TorchServeOnAWS/tree/master/3_torchserve_byoc_with_amazon_sagemaker), incorporating utilities like AWS ELB & Cloudwatch.
+This work *may* also be extended to deploy the Torchserve Docker containers with HF models at scale with [AWS Cloudformation](https://github.com/pytorch/serve/tree/master/examples/cloudformation) & [AWS EKS](https://github.com/pytorch/serve/tree/master/kubernetes/EKS) as explained in the official Torchserve repo & [AWS Sagemaker](https://github.com/tescal2/TorchServeOnAWS/tree/master/3_torchserve_byoc_with_amazon_sagemaker), incorporating utilities like AWS ELB & Cloudwatch.
 
 We would also benchmark the REST API calls in time units and compare the model performances for the following approaches: 
 * Deploying the [DistilBERT](https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion) Huggingface model with a custom torchserve handler. (refer `HF-only` directory)
@@ -29,3 +29,9 @@ We would also benchmark the REST API calls in time units and compare the model p
 * https://github.com/cceyda/lit-NER
 * https://github.com/tescal2/TorchServeOnAWS
 * https://huggingface.co/spaces/lewtun/twitter-sentiments
+
+## Support
+There are many ways to support an open-source work, ⭐ing it is one of them. 
+
+## Issues
+In case of bugs or queries, raise an Issue, or even better, raise a PR with fixes.

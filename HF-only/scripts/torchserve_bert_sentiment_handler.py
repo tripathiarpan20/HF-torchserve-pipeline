@@ -61,11 +61,24 @@ class DistilBERTEmotionHandler(BaseHandler):
         self.initialized = True
         #----------------------------------------
 
+    #Function to read .txt file and convert it into a string
+    #Reference: https://stackoverflow.com/questions/8369219/how-to-read-a-text-file-into-a-string-variable-and-strip-newlines
+    def convert_to_string(self, filename):
+        with open(filename, 'r') as file:
+            readfile = file.read().replace('\n', '')
+
+
     def preprocess(self, data):
         '''
         Need to write code to convert the input batch into List[str] that can be processed by the `pipeline` as in this example:
         https://huggingface.co/spaces/lewtun/twitter-sentiments/blob/main/app.py#L34
         '''
+
+        #Assuming `data` to be List of txt files, where each txt file contains a single input whose sentiments are to be predicted
+        
+        #Reference: https://www.geeksforgeeks.org/python-map-function/
+        data = map(self.convert_to_string, data)
+
         return data
 
     def inference(self, data):
