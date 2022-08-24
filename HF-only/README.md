@@ -12,7 +12,7 @@ The `Using Torchserve Docker containers on EC2 for inference` section of [this N
 Within the AWS EC2 instance, activate the PyTorch environment and navigate to the current folder after cloning this repo: 
 
 ```
-conda activate pytorch
+source activate pytorch
 git clone https://github.com/tripathiarpan20/HF-torchserve-pipeline
 cd HF-torchserve-pipeline/HF-only
 ```
@@ -42,10 +42,39 @@ Check whether the Torchserve container is present in the list of Docker images:
 docker images
 ```
 
-Run the Torchserve server with Docker and archived model (refer to [this](https://github.com/pytorch/serve/tree/master/docker#create-torch-model-archiver-from-container) and [this](https://github.com/pytorch/serve/blob/fd4e3e8b72bed67c1e83141265157eed975fec95/docs/use_cases.md#secure-model-serving) for more details):
+Run the Torchserve server container with Docker and archived model (refer to [this](https://github.com/pytorch/serve/tree/master/docker#create-torch-model-archiver-from-container) and [this](https://github.com/pytorch/serve/blob/fd4e3e8b72bed67c1e83141265157eed975fec95/docs/use_cases.md#secure-model-serving) for more details):
 
 ```
 docker run -d --rm -it -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod-bert -v $(pwd)/model-store:/home/model-server/model-store -v $(pwd)/scripts/config.properties:/home/model-server/config.properties torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
 ```
 
+Check whether the model was started properly:
+```
+curl http://127.0.0.1:8081/models/
+```
+
+Run for more details:
+```
+curl http://127.0.0.1:8081/models/bert_sentiment/
+```
+
+In case of bugs, can log into the recently created container and check the logs (check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details)
+
+```
+docker ps -l -q > $serve_cont_id
+docker exec -it $serve_cont_id /bin/bash
+cat logs/model_logs.log
+
+```
+
 ## Inferencing and Benchmarking
+
+Prepare a sample text
+```
+echo "This is amazing" > sampleText.txt
+```
+
+Send inference requests:
+```
+curl http://localhost:8080/predictions/bert_sentiment -T sampleText.txt
+```

@@ -22,16 +22,16 @@ from transformers import pipeline
 
 class DistilBERTEmotionHandler(BaseHandler):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         self.tokenizer = None
 
-    def load_model(self):
-        pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion")
+    def load_model(self, device_id):
+        print("Loading DistilBERT model from HF hub")
+        pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
+        print("Successfully loaded DistilBERT model from HF hub")
         return pipe
 
     def initialize(self, context):
-
-
         '''
         context.system_properties['gpu_id'] is decided by Torchserve server to utilize 
         all available GPUs for inference equally:
@@ -43,11 +43,10 @@ class DistilBERTEmotionHandler(BaseHandler):
             if torch.cuda.is_available() and properties.get("gpu_id") is not None
             else "cpu"
         )
-        self.device = torch.device(
-            self.map_location + ":" + str(properties.get("gpu_id"))
-            if torch.cuda.is_available() and properties.get("gpu_id") is not None
-            else self.map_location
+        self.device_id = ( -1 if self.map_location is "cpu" 
+            else int(properties.get("gpu_id"))
         )
+
         self.manifest = context.manifest
 
 
@@ -55,8 +54,7 @@ class DistilBERTEmotionHandler(BaseHandler):
         #----------------------------------------
         self.initialized = False
 
-        self.model = self.load_model()
-        self.model.model.to(self.device)
+        self.model = self.load_model(self.device_id)
 
         self.initialized = True
         #----------------------------------------
@@ -77,7 +75,9 @@ class DistilBERTEmotionHandler(BaseHandler):
         #Assuming `data` to be List of txt files, where each txt file contains a single input whose sentiments are to be predicted
         
         #Reference: https://www.geeksforgeeks.org/python-map-function/
+        print('Preprocessing request txt file')
         data = map(self.convert_to_string, data)
+        print('Successfully preprocessed request txt file')
 
         return data
 
