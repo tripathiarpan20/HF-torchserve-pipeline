@@ -18,10 +18,12 @@ cd /HF-only
 
 Create a Torchserve model archive along with relevant dependencies in `requirements.txt` (like 🤗 transformers).  
 
-**Note:** Since we are not giving a pretrained `.pth` file (as it would be downloaded from 🤗 in the `initialize` method of our `torchserve_bert_sentiment_handler.py`'), the `--serialized-file` option is redundant and we do not use the context in our handler. 
+**Note:** Since we are not giving a pretrained checkpoint as a `.pth` file (as it would be downloaded from 🤗 in the `initialize` method of our `torchserve_bert_sentiment_handler.py`'), the `--serialized-file` option is redundant and we do not use the context in our handler. 
 ```
 mkdir -p model-store
-torch-model-archiver --model-name bert_sentiment --serialized-file <SOME-RANDOM-FILE> --version 1.0 --model-file scripts/torchserve_bert_sentiment_handler.py --export-path model-store -r requirements.txt
+touch dummy_file.pth
+torch-model-archiver --model-name bert_sentiment --serialized-file dummy_file.pth --version 1.0 --model-file scripts/torchserve_bert_sentiment_handler.py --export-path model-store -r requirements.txt
+rm dummy_file.pth
 ```
 
 
@@ -39,10 +41,10 @@ Check whether the Torchserve container is present in the list of Docker images:
 docker images
 ```
 
-Run the Torchserve server with Docker and archived model (refer to [the docs](https://github.com/pytorch/serve/tree/master/docker#create-torch-model-archiver-from-container) for more details):
+Run the Torchserve server with Docker and archived model (refer to [this](https://github.com/pytorch/serve/tree/master/docker#create-torch-model-archiver-from-container) and [this](https://github.com/pytorch/serve/blob/fd4e3e8b72bed67c1e83141265157eed975fec95/docs/use_cases.md#secure-model-serving) for more details):
 
 ```
-docker run -d --rm -it -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod-bert -v $(pwd)/scripts/config.properties:/home/model-server/config.properties -v $(pwd)/model-store:/home/model-server/model-store torchserve-cpu-prod
+docker run -d --rm -it -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod-bert -v $(pwd)/model-store:/home/model-server/model-store torchserve-cpu-prod torchserve --model-store=/tmp/models --ts-config scripts/config.properties
 ```
 
 ## Inferencing and Benchmarking
