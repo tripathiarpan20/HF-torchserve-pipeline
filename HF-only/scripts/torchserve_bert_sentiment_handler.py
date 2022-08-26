@@ -26,13 +26,16 @@ class DistilBERTEmotionHandler(BaseHandler):
         super().__init__()
         self.tokenizer = None
 
-    def load_model(self, device_id, hf_models_folder = "model-store/HF-models" , model_name = "distilbert-base-uncased-emotion"):
+    def load_model(self, device_id, model_name, hf_models_folder = "model-store/HF-models"):
         print('Entered `load_model` function')
         model_folder = os.path.join(hf_models_folder, model_name)
-        print(f"Loading DistilBERT model from local folder: {model_folder}")
+        
+        print(f"Loading DistilBERT config and tokenizer from local folder: {model_folder}")
         config = AutoConfig.from_pretrained(model_folder , local_files_only = True )
         tokenizer = AutoTokenizer.from_pretrained(model_folder, local_files_only = True )
-        model = AutoModelForSequenceClassification.from_pretrained(model_folder, config = config, local_files_only = True )
+
+        print(f"Loading DistilBERT model from local folder: {model_folder}")
+        model = AutoModelForSequenceClassification.from_pretrained(model_folder, config = config, local_files_only = True)
 
         print("Creating pipeline")
         # pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
@@ -47,6 +50,8 @@ class DistilBERTEmotionHandler(BaseHandler):
         https://github.com/pytorch/serve/blob/master/docs/custom_service.md#handling-model-execution-on-multiple-gpus
         '''
         properties = context.system_properties
+        
+
         self.map_location = (
             "cuda"
             if torch.cuda.is_available() and properties.get("gpu_id") is not None
@@ -63,7 +68,8 @@ class DistilBERTEmotionHandler(BaseHandler):
         #----------------------------------------
         self.initialized = False
 
-        self.model = self.load_model(self.device_id)
+        model_name = self.manifest[model_name]
+        self.model = self.load_model(self.device_id, model_name)
 
         self.initialized = True
         #----------------------------------------

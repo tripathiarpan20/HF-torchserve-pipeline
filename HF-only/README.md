@@ -29,12 +29,14 @@ Download the 🤗 model repo with git-lfs ([example](https://huggingface.co/bhad
 ```
 git lfs install
 mkdir -p model-store/HF-models/
-git clone https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion model-store/HF-models/
-cd model-store/HF-models/distilbert-base-uncased-emotion
+git clone https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion model-store/HF-models/bert_sentiment/
+cd model-store/HF-models/bert_sentiment/
 git lfs install
 git lfs pull
 cd ../../..
 ```
+
+**NOTE**: The cloned repo of the model & the name of the `.mar` file should be exactly the same, this constraint was necessary to register new models with `curl POST` requests flexibly (i.e, during server startup with Docker and after).
 
 
 
@@ -87,6 +89,15 @@ serve_cont_id=$(docker ps -l -q)
 docker exec -it $serve_cont_id /bin/bash
 cat logs/model_log.log
 ```
+
+## Add New models to the Torchserve serve
+
+###TODO  
+Hint: 
+
+Modify Hander script to use context and manifest to store HF model name (as in [this]() with `left` and `right`)  
+Use `curl POST command` as in [this](https://github.com/pytorch/serve/blob/master/docs/management_api.md#register-a-model)
+
 
 ## Inferencing and Benchmarking
 
