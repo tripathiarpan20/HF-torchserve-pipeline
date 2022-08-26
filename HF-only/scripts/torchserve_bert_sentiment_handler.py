@@ -14,9 +14,10 @@ https://github.com/pytorch/serve/issues/1783
 
 '''
 
+import os
 import torch
 from ts.torch_handler.base_handler import BaseHandler
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification, AutoConfig
 
 
 
@@ -25,9 +26,17 @@ class DistilBERTEmotionHandler(BaseHandler):
         super().__init__()
         self.tokenizer = None
 
-    def load_model(self, device_id):
-        print("Loading DistilBERT model from HF hub")
-        pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
+    def load_model(self, device_id, hf_models_folder = "model-store/HF-models" , model_name = "distilbert-base-uncased-emotion"):
+        print('Entered `load_model` function')
+        model_folder = os.path.join(hf_models_folder, model_name)
+        print(f"Loading DistilBERT model from local folder: {model_folder}")
+        config = AutoConfig.from_pretrained(model_folder , local_files_only = True )
+        tokenizer = AutoTokenizer.from_pretrained(model_folder, local_files_only = True )
+        model = AutoModelForSequenceClassification.from_pretrained(model_folder, config = config, local_files_only = True )
+
+        print("Creating pipeline")
+        # pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
+        pipe = pipeline(task="sentiment-analysis", framework = "pt", model=model, config=config, tokenizer = tokenizer, device = device_id)
         print("Successfully loaded DistilBERT model from HF hub")
         return pipe
 
@@ -70,6 +79,7 @@ class DistilBERTEmotionHandler(BaseHandler):
         '''
         Need to write code to convert the input batch into List[str] that can be processed by the `pipeline` as in this example:
         https://huggingface.co/spaces/lewtun/twitter-sentiments/blob/main/app.py#L34
+        
         '''
 
         #Assuming `data` to be List of txt files, where each txt file contains a single input whose sentiments are to be predicted

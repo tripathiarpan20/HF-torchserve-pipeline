@@ -25,6 +25,7 @@ We would also benchmark the REST API calls in time units and compare the model p
 * https://github.com/pytorch/serve
 * https://huggingface.co/docs/transformers/main_classes/pipelines
 * https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion
+* https://huggingface.co/course/chapter2/2?fw=pt
 * https://huggingface.co/docs/transformers/main_classes/pipelines
 * https://github.com/aws-samples/amazon-sagemaker-endpoint-deployment-of-siamese-network-with-torchserve
 * https://github.com/cceyda/lit-NER
