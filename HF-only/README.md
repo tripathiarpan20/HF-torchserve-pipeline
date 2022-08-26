@@ -25,12 +25,12 @@ sudo yum-config-manager --enable epel
 sudo yum install git-lfs
 ```
 
-Download the 🤗 model repo with git-lfs ([example](https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion/tree/main)) along with all the model dependencies like checkpoints, vocabulary, config etc:
+Download the 🤗 model repo with git-lfs ([example](https://huggingface.co/apple/mobilevit-xx-small)) along with all the model dependencies like checkpoints, vocabulary, config etc:
 ```
 git lfs install
 mkdir -p HF-models/
-git clone https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion HF-models/bert_sentiment/
-cd HF-models/bert_sentiment/
+git clone https://huggingface.co/apple/mobilevit-xx-small HF-models/vitxxsmall/
+cd HF-models/vitxxsmall/
 git lfs install
 git lfs pull
 cd ../..
@@ -40,13 +40,13 @@ cd ../..
 
 
 
-Create a Torchserve model archive with the model handler file (`scripts/torchserve_bert_sentiment_handler.py` in our example) along with relevant dependencies in `requirements.txt` (like 🤗 transformers).  
+Create a Torchserve model archive with the model handler file (`scripts/torchserve_vitxxsmall_handler.py` in our example) along with relevant dependencies in `requirements.txt` (like 🤗 transformers).  
 
-**Note:** Since we are not giving a pretrained checkpoint as a `.pth` file (as it would be downloaded from 🤗 in the `initialize` method of our `torchserve_bert_sentiment_handler.py`), the `--serialized-file` option is redundant and we do not use the context in our handler. 
+**Note:** Since we are not giving a pretrained checkpoint as a `.pth` file (as it would be downloaded from 🤗 in the `initialize` method of our `torchserve_vitxxsmall_handler.py`), the `--serialized-file` option is redundant and we do not use the context in our handler. 
 ```
-mkdir -p HF-models/
+mkdir -p model-store
 touch dummy_file.pth
-torch-model-archiver --model-name bert_sentiment --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_bert_sentiment_handler.py --export-path model-store -r requirements.txt
+torch-model-archiver --model-name vitxxsmall --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_vitxxsmall_handler.py --export-path model-store -r requirements.txt
 rm -f dummy_file.pth
 ```
 
@@ -68,7 +68,7 @@ docker images
 Run the Torchserve server container with Docker and archived model (refer to [this](https://github.com/pytorch/serve/tree/master/docker#create-torch-model-archiver-from-container) and [this](https://github.com/pytorch/serve/blob/fd4e3e8b72bed67c1e83141265157eed975fec95/docs/use_cases.md#secure-model-serving) for more details):
 
 ```
-docker run -d --rm -it --shm-size=50g -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod-bert -v $(pwd)/scripts/config.properties:/home/model-server/config.properties --mount type=bind,source=$(pwd)/model-store,target=/home/model-server/model-store --mount type=bind,source=$(pwd)/HF-models,target=/home/model-server/HF-models torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
+docker run -d --rm -it --shm-size=50g -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod -v $(pwd)/scripts/config.properties:/home/model-server/config.properties --mount type=bind,source=$(pwd)/model-store,target=/home/model-server/model-store --mount type=bind,source=$(pwd)/HF-models,target=/home/model-server/HF-models torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
 ```
 
 Check whether the model was started properly (keep trying repeatedly for a few seconds while server boots up):
@@ -80,7 +80,7 @@ curl http://127.0.0.1:8081/models/
 
 Run for more details:
 ```
-curl http://127.0.0.1:8081/models/bert_sentiment/
+curl http://127.0.0.1:8081/models/vitxxsmall/
 ```
 
 In case of bugs, can log into the recently created container and check the logs for debugging or metrics(check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details)
@@ -109,5 +109,5 @@ echo "This is amazing" > sampleText.txt
 
 Send inference requests:
 ```
-curl http://localhost:8080/predictions/bert_sentiment -T sampleText.txt
+curl http://localhost:8080/predictions/vitxxsmall -T sampleText.txt
 ```

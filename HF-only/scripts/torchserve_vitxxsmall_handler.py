@@ -17,8 +17,30 @@ https://github.com/pytorch/serve/issues/1783
 import os
 import torch
 from ts.torch_handler.base_handler import BaseHandler
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification, AutoConfig
+from transformers import *
 
+
+#Source: https://huggingface.co/docs/transformers/v4.21.2/en/main_classes/pipelines#transformers.pipeline.task
+pipeline_module_map = {
+    "audio-classification" : AudioClassificationPipeline,
+    "automatic-speech-recognition" : AutomaticSpeechRecognitionPipeline,
+    "conversational" : ConversationalPipeline,
+    "feature-extraction" : FeatureExtractionPipeline,
+    "fill-mask" : FillMaskPipeline,
+    "image-classification" : ImageClassificationPipeline,
+    "question-answering": QuestionAnsweringPipeline,
+    "table-question-answering": TableQuestionAnsweringPipeline,
+    "text2text-generation": Text2TextGenerationPipeline,
+    "text-classification" : TextClassificationPipeline,
+    "sentiment-analysis": TextClassificationPipeline,
+    "text-generation" : TextGenerationPipeline,
+    "token-classification" : TokenClassificationPipeline,
+    "ner": TokenClassificationPipeline,
+    "translation": TranslationPipeline,
+    "translation_xx_to_yy": TranslationPipeline,
+    "summarization": SummarizationPipeline,
+    "zero-shot-classification": ZeroShotClassificationPipeline,
+}
 
 
 class DistilBERTEmotionHandler(BaseHandler):
@@ -26,7 +48,7 @@ class DistilBERTEmotionHandler(BaseHandler):
         super().__init__()
         self.tokenizer = None
 
-    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF-models"):
+    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF-models", task = "image-classification"):
         print('Entered `load_model` function')
         model_folder = os.path.join(hf_models_folder, model_name)
         
@@ -39,7 +61,8 @@ class DistilBERTEmotionHandler(BaseHandler):
 
         print("Creating pipeline")
         # pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
-        pipe = pipeline(task="sentiment-analysis", framework = "pt", model=model, config=config, tokenizer = tokenizer, device = device_id)
+        
+        pipe = pipeline(task=task, framework = "pt", model=model, config=config, tokenizer = tokenizer, device = device_id)
         print("Successfully loaded DistilBERT model from HF hub")
         return pipe
 
