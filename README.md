@@ -16,6 +16,7 @@ We would also benchmark the REST API calls in time units and compare the model p
 - [ ] Add [AB Testing](https://github.com/pytorch/serve/tree/master/benchmarks) experiments with Torchserve Benchmarking utilities.
 - [ ] Add dynamic batching explanation
 - [ ] Add Torchscripted model code
+- [ ] Add inference optimizations from [🤗 optimum](https://github.com/huggingface/optimum) library.
 - [ ] Try [LLM.int8](https://twitter.com/Tim_Dettmers/status/1559892888326049792) integration
 
 

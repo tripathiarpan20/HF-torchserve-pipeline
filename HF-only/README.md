@@ -24,7 +24,7 @@ Create a Torchserve model archive along with relevant dependencies in `requireme
 mkdir -p model-store
 touch dummy_file.pth
 torch-model-archiver --model-name bert_sentiment --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_bert_sentiment_handler.py --export-path model-store -r requirements.txt
-rm dummy_file.pth
+rm -f dummy_file.pth
 ```
 
 
@@ -48,8 +48,10 @@ Run the Torchserve server container with Docker and archived model (refer to [th
 docker run -d --rm -it -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod-bert -v $(pwd)/model-store:/home/model-server/model-store -v $(pwd)/scripts/config.properties:/home/model-server/config.properties torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
 ```
 
-Check whether the model was started properly:
+Check whether the model was started properly (keep trying repeatedly for a few seconds while server boots up):
 ```
+curl http://127.0.0.1:8080/ping
+#OR
 curl http://127.0.0.1:8081/models/
 ```
 
@@ -58,13 +60,12 @@ Run for more details:
 curl http://127.0.0.1:8081/models/bert_sentiment/
 ```
 
-In case of bugs, can log into the recently created container and check the logs (check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details)
+In case of bugs, can log into the recently created container and check the logs for debugging or metrics(check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details)
 
 ```
-docker ps -l -q > $serve_cont_id
+serve_cont_id=$(docker ps -l -q) 
 docker exec -it $serve_cont_id /bin/bash
-cat logs/model_logs.log
-
+cat logs/model_log.log
 ```
 
 ## Inferencing and Benchmarking

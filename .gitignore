@@ -1,3 +1,4 @@
 *.pth
 HF-only/serve
 HF-sparseml/serve
+HF-only/copypasta.txt
