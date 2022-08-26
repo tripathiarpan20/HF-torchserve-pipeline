@@ -16,6 +16,10 @@ https://github.com/pytorch/serve/issues/1783
 
 import os
 import torch
+import base64
+import io
+from PIL import Image
+
 from ts.torch_handler.base_handler import BaseHandler
 from transformers import *
 
@@ -39,30 +43,28 @@ pipeline_module_map = {
     "translation": TranslationPipeline,
     "translation_xx_to_yy": TranslationPipeline,
     "summarization": SummarizationPipeline,
-    "zero-shot-classification": ZeroShotClassificationPipeline,
+    "zero-shot-classification": ZeroShotClassificationPipeline
 }
 
+task="image-classification"
+
+try:
+    assert task in pipeline_module_map.keys()
+except:
+    print("Enter a task supported by 🤗 pipeline")
+    exit(0)
 
 class DistilBERTEmotionHandler(BaseHandler):
     def __init__(self):
         super().__init__()
         self.tokenizer = None
 
-    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF-models", task = "image-classification"):
+    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF-models"):
         print('Entered `load_model` function')
         model_folder = os.path.join(hf_models_folder, model_name)
-        
-        print(f"Loading DistilBERT config and tokenizer from local folder: {model_folder}")
-        config = AutoConfig.from_pretrained(model_folder , local_files_only = True )
-        tokenizer = AutoTokenizer.from_pretrained(model_folder, local_files_only = True )
-
-        print(f"Loading DistilBERT model from local folder: {model_folder}")
-        model = AutoModelForSequenceClassification.from_pretrained(model_folder, config = config, local_files_only = True)
 
         print("Creating pipeline")
-        # pipe = pipeline(task="sentiment-analysis", model="bhadresh-savani/distilbert-base-uncased-emotion", device = device_id)
-        
-        pipe = pipeline(task=task, framework = "pt", model=model, config=config, tokenizer = tokenizer, device = device_id)
+        pipe = pipeline(task=task, framework = "pt", model=model_folder, device = device_id)
         print("Successfully loaded DistilBERT model from HF hub")
         return pipe
 
@@ -99,37 +101,64 @@ class DistilBERTEmotionHandler(BaseHandler):
 
     #Function to read .txt file and convert it into a string
     #Reference: https://stackoverflow.com/questions/8369219/how-to-read-a-text-file-into-a-string-variable-and-strip-newlines
-    def convert_to_string(self, filename):
+    def read_text_file(self, filename):
         with open(filename, 'r') as file:
             readfile = file.read().replace('\n', '')
+        return readfile
 
+    def read_image_file(self, file):
+        image = file.get("data") or file.get("body")
+        if isinstance(image, str):
+            # if the image is a string of bytesarray.
+            image = base64.b64decode(image)
 
+        # If the image is sent as bytesarray
+        if isinstance(image, (bytearray, bytes)):
+            image = Image.open(io.BytesIO(image))
+
+        return image
+
+    '''
+    This has to be changed according to the task, for example, in case of text file, need to convert it into list, in case of images, it needs to be directly given the image
+    '''
     def preprocess(self, data):
         '''
         Need to write code to convert the input batch into List[str] that can be processed by the `pipeline` as in this example:
         https://huggingface.co/spaces/lewtun/twitter-sentiments/blob/main/app.py#L34
-        
         '''
 
         #Assuming `data` to be List of txt files, where each txt file contains a single input whose sentiments are to be predicted
         
+        
         #Reference: https://www.geeksforgeeks.org/python-map-function/
-        print('Preprocessing request txt file')
-        data = map(self.convert_to_string, data)
-        print('Successfully preprocessed request txt file')
+        # print('Preprocessing request txt file')
+        # data = map(self.read_text_file, data)
+        # print('Successfully preprocessed request txt file')
 
-        return data
+        print('Preprocessing request image files')
+        data = map(self.read_image_file, data)
+        print('Successfully preprocessed request image files')
+        
+        return list(data)
 
     def inference(self, data):
+        print(f"Data received by `inference` function is: {data}")
         preds = self.model(data)
 
-        response = dict()
-        response["labels"] = [pred["label"] for pred in preds]
-        response["scores"] = [pred["score"] for pred in preds]
-        return response
+
+        '''
+        `preds` is something like this for MobileViT XX Small pipeline predictions for 1 input:
+        [[{'score': 0.5584330558776855, 'label': 'remote control, remote'}, 
+        {'score': 0.11318826675415039, 'label': 'joystick'}, 
+        {'score': 0.08971238136291504, 'label': 'mouse, computer mouse'}, 
+        {'score': 0.027173032984137535, 'label': 'ocarina, sweet potato'}, 
+        {'score': 0.019073771312832832, 'label': 'pick, plectrum, plectron'}]]
+        '''
+
+        return preds
 
     def postprocess(self, data):
-        return data.tolist()
+        return data
 
     
     '''
