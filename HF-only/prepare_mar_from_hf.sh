@@ -5,12 +5,13 @@ for arg in "$@"
 do
     case $arg in
         -t|--task)
-            sed -i "s/task=\".*/task=\"$2\"/g" HF-only/scripts/torchserve_vitxxsmall_handler.py
-            shift
+            sed -i "s/task=\".*/task=\"$2\"/g" scripts/torchserve_vitxxsmall_handler.py
+            shift 2
             ;;
         -n|--model-name)
             MODEL_NAME="$2"
-            shift
+            echo "MODEL_NAME is $MODEL_NAME"
+            shift 2
             ;;
         -u|--hf-hub-link)
             HF_REPO_URL="$2"
@@ -23,7 +24,7 @@ do
             touch dummy_file.pth
             torch-model-archiver --model-name $MODEL_NAME --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_vitxxsmall_handler.py --export-path model-store -r requirements.txt
             rm -f dummy_file.pth
-            shift
+            shift 2
             ;;
     esac
 done

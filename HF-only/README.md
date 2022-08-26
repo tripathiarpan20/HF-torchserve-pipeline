@@ -141,10 +141,11 @@ The high level approach to use any of the 🤗 pipelines for a desired [*task*](
 
 * Decide a name (variable `$modelName` below) for the task (variable `$task` below) supported by a 🤗 model that supports the task (its repo link as variable `$repoUrl` below), then run the below commands to download the models and create the `.mar` file:
 ```
-$modelName="vitxxsmall"
-$task="image-classification"
-$repoUrl="https://huggingface.co/apple/mobilevit-xx-small/tree/main"
+modelName="vitxxsmall"
+task="image-classification"
+repoUrl="https://huggingface.co/apple/mobilevit-xx-small"
 
+chmod +x prepare_mar_from_hf.sh 
 ./prepare_mar_from_hf.sh -t $task -n $modelName -u $repoUrl
 ```
 
