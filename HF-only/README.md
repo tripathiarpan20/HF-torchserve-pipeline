@@ -36,7 +36,7 @@ Run the Torchserve server container with Docker and archived model (refer to [th
 ```
 mkdir -p HF-models
 mkdir -p model-store
-docker run -d --rm -it --shm-size=50g -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod -v $(pwd)/scripts/config.properties:/home/model-server/config.properties --mount type=bind,source=$(pwd)/model-store,target=/home/model-server/model-store --mount type=bind,source=$(pwd)/HF-models,target=/home/model-server/HF-models torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
+docker run -d --rm -it --shm-size=50g -p 8080:8080 -p 8081:8081 --name torchserve-cpu-prod --mount type=bind,source=$(pwd)/scripts/config.properties,target=/home/model-server/config.properties --mount type=bind,source=$(pwd)/model-store,target=/home/model-server/model-store --mount type=bind,source=$(pwd)/HF-models,target=/home/model-server/HF-models torchserve-cpu-prod torchserve --ncs --model-store=/home/model-server/model-store --ts-config config.properties
 ```
 
 Check whether the model was started properly (keep trying repeatedly for a few seconds while server boots up):
@@ -85,7 +85,9 @@ Registering the MobileViT XX Small model on the Torchserve server (more details 
 curl -X POST "localhost:8081/models?url=vitxxsmall.mar&batch_size=8&max_batch_delay=10&initial_workers=1"
 ```
 
-In case of bugs, can log into the recently created container and check the logs for debugging or metrics(check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details)
+In case of bugs, recently created container can be accessed to check the logs for debugging, metrics etc(check the [logging documentation](https://github.com/pytorch/serve/blob/master/docs/logging.md) for details).  
+In case `torch-model-archiver` is unavailable in the AMI (or any cloud instance), the Torchserve container can be accessed to create the model archive in the `model-store`, which is mounted as shared memory between the AMI/VM and container (might need modifications to [`mount`](https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag) flag )
+
 
 ```
 serve_cont_id=$(docker ps -l -q) 
