@@ -145,10 +145,11 @@ The high level approach to use any of the 🤗 pipelines for a desired [*task*](
 ```
 modelName="vitxxsmall"
 task="image-classification"
+framework="pt"       #should be either "pt" (for PyTorch) or "tf" (for Tensorflow) and the .pt or .tf
 repoUrl="https://huggingface.co/apple/mobilevit-xx-small"
 
 chmod +x prepare_mar_from_hf.sh 
-./prepare_mar_from_hf.sh -t $task -n $modelName -u $repoUrl
+./prepare_mar_from_hf.sh -t $task -n $modelName -f $framework -u $repoUrl
 ```
 
 * After waiting for a few seconds for the server to boot up, register the downloaded model on the Torchserve server:

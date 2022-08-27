@@ -4,6 +4,14 @@ MODEL_NAME = ""
 for arg in "$@"
 do
     case $arg in
+        -h|--help)
+            echo "options:"
+            echo "-t, --task specify task for the pipeline supported by HF Hub model"
+            echo "-n, --model-name specify name for locally saved model repo"
+            echo "-f, --framework specify the framework for the loaded model available in the repo, should be either \"pt\" or \"tf\""
+            echo "-u, --hf-hub-link specify the link to the repo available in HF model hub"
+            exit 0
+            ;;
         -t|--task)
             sed -i "s/task=\".*/task=\"$2\"/g" scripts/torchserve_vitxxsmall_handler.py
             shift 2
@@ -11,6 +19,10 @@ do
         -n|--model-name)
             MODEL_NAME="$2"
             echo "MODEL_NAME is $MODEL_NAME"
+            shift 2
+            ;;
+        -f|--framework)
+            sed -i "s/framework=\".*/framework=\"$2\"/g" scripts/torchserve_vitxxsmall_handler.py
             shift 2
             ;;
         -u|--hf-hub-link)

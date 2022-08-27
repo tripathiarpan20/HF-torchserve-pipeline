@@ -47,6 +47,7 @@ pipeline_module_map = {
 }
 
 task="image-classification"
+framework="pt"
 
 try:
     assert task in pipeline_module_map.keys()
@@ -64,7 +65,7 @@ class ViTImageClassifier(BaseHandler):
         model_folder = os.path.join(hf_models_folder, model_name)
 
         print("Creating pipeline")
-        pipe = pipeline(task=task, framework = "pt", model=model_folder, device = device_id)
+        pipe = pipeline(task=task, framework=framework, model=model_folder, device = device_id)
         print("Successfully loaded DistilBERT model from HF hub")
         return pipe
 
