@@ -19,7 +19,8 @@ We would also benchmark the REST API calls in time units and compare the model p
 - [ ] Add dynamic batching explanation.
 - [ ] Integrate inference optimizations from [🤗 optimum](https://github.com/huggingface/optimum) library:
   - [ ] ONNX Runtime inference
-  - [ ] ONNX Quantized Runtime inference 
+  - [ ] ONNX Quantized Runtime inference
+  - [ ] Optional: Try [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt) integration ([reference](https://developer.nvidia.com/blog/optimizing-t5-and-gpt-2-for-real-time-inference-with-tensorrt/))
 - [ ] Try [LLM.int8](https://twitter.com/Tim_Dettmers/status/1559892888326049792) integration
 
 
