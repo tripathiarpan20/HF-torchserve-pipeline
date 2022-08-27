@@ -54,7 +54,7 @@ except:
     print("Enter a task supported by 🤗 pipeline")
     exit(0)
 
-class DistilBERTEmotionHandler(BaseHandler):
+class ViTImageClassifier(BaseHandler):
     def __init__(self):
         super().__init__()
         self.tokenizer = None
@@ -145,9 +145,9 @@ class DistilBERTEmotionHandler(BaseHandler):
         print(f"Data received by `inference` function is: {data}")
         preds = self.model(data)
 
-
+        
         '''
-        `preds` is something like this for MobileViT XX Small pipeline predictions for 1 input:
+        `preds` is something like this for MobileViT XX Small pipeline predictions for 1 inference request:
         [[{'score': 0.5584330558776855, 'label': 'remote control, remote'}, 
         {'score': 0.11318826675415039, 'label': 'joystick'}, 
         {'score': 0.08971238136291504, 'label': 'mouse, computer mouse'}, 
