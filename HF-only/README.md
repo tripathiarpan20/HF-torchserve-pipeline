@@ -80,7 +80,7 @@ rm -f dummy_file.pth
 
 Since the `load_models` attribute of `config.properties` (that was passed to the `docker run` command while starting the Torchserve server) is set to "standalone", the Torchserve server is initialized without any models initially (even though `model-store` might contain `.mar` files). 
 
-Registering the MobileViT XX Small model on the Torchserve server (more details [here](https://github.com/pytorch/serve/blob/master/docs/management_api.md#register-a-model)):
+Registering the MobileViT XX Small model on the Torchserve server (more details [here](https://github.com/pytorch/serve/blob/master/docs/management_api.md#register-a-model)) with `max_batch_delay` in milliseconds, which is the time the Torchserve server waits to bundle concurrent inference requests into a batch with maximum size of `batch_size` (i.e, `preprocess` of the handler always receives list of requests with length <= `batch_size`):
 ```
 curl -X POST "localhost:8081/models?url=vitxxsmall.mar&batch_size=8&max_batch_delay=10&initial_workers=1"
 ```

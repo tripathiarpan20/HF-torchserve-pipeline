@@ -15,24 +15,26 @@ We would also benchmark the REST API calls in time units and compare the model p
 
 ## Todo
 - [X] Verify HF pipeline functionality with  AWS EC2 `t2.micro`
-- [ ] Add [AB Testing](https://github.com/pytorch/serve/tree/master/benchmarks) experiments with Torchserve Benchmarking utilities.
-- [ ] Add dynamic batching explanation
-- [ ] Add Torchscripted model code
-- [ ] Add inference optimizations from [🤗 optimum](https://github.com/huggingface/optimum) library.
+- [ ] Add [benchmarking](https://github.com/pytorch/serve/tree/master/benchmarks) scripts for throughput with Torchserve utilities.
+- [ ] Add dynamic batching explanation.
+- [ ] Integrate inference optimizations from [🤗 optimum](https://github.com/huggingface/optimum) library:
+  - [ ] ONNX Runtime inference
+  - [ ] ONNX Quantized Runtime inference 
 - [ ] Try [LLM.int8](https://twitter.com/Tim_Dettmers/status/1559892888326049792) integration
 
 
 ## References
-* [My Torchserve + AWS Notion journal](https://garrulous-saxophone-8a6.notion.site/AWS-Torchserve-resources-52fdfd81fa1c4a5ebb9a5fd7398ed552)
 * https://github.com/pytorch/serve
+* https://github.com/huggingface/transformers
+* https://github.com/huggingface/optimum
 * https://huggingface.co/docs/transformers/main_classes/pipelines
+* [My Torchserve + AWS Notion journal](https://garrulous-saxophone-8a6.notion.site/AWS-Torchserve-resources-52fdfd81fa1c4a5ebb9a5fd7398ed552)
 * https://huggingface.co/apple/mobilevit-xx-small
 * https://huggingface.co/course/chapter2/2?fw=pt
 * https://huggingface.co/docs/transformers/main_classes/pipelines
 * https://github.com/aws-samples/amazon-sagemaker-endpoint-deployment-of-siamese-network-with-torchserve
 * https://github.com/cceyda/lit-NER
 * https://github.com/tescal2/TorchServeOnAWS
-* https://huggingface.co/spaces/lewtun/twitter-sentiments
 
 ## Support
 There are many ways to support an open-source work, ⭐ing it is one of them. 
