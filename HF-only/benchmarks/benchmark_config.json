@@ -1,0 +1,17 @@
+{
+  "url":"vitxxsmall.mar",
+  "gpus": "",
+  "exec_env": "local",
+  "batch_size": 8,
+  "batch_delay": 20,
+  "workers":1,
+  "concurrency": 10,
+  "requests": 1000,
+  "input": "input.jpg",
+  "content_type": "application/jpg",
+  "image": "torchserve-cpu-prod",
+  "docker_runtime": "",
+  "config_properties": "scripts/config.properties",
+  "inference_model_url": "predictions/benchmark",
+  "tmp_dir": "."
+}
