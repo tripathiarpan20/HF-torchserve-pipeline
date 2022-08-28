@@ -60,7 +60,7 @@ class ViTImageClassifier(BaseHandler):
         super().__init__()
         self.tokenizer = None
 
-    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF_models"):
+    def load_model(self, device_id, model_name, hf_models_folder = "/home/model-server/HF-models"):
         print('Entered `load_model` function')
         model_folder = os.path.join(hf_models_folder, model_name)
 

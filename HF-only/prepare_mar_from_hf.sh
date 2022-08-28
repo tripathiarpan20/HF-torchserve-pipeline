@@ -28,13 +28,13 @@ do
         -u|--hf-hub-link)
             HF_REPO_URL="$2"
             git lfs install
-            git clone $HF_REPO_URL HF_models/$MODEL_NAME/
-            cd HF_models/$MODEL_NAME/
+            git clone $HF_REPO_URL HF-models/$MODEL_NAME/
+            cd HF-models/$MODEL_NAME/
             git lfs install
             git lfs pull
             cd ../..
             touch dummy_file.pth
-            torch-model-archiver --model-name $MODEL_NAME --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_vitxxsmall_handler.py --export-path model_store -r requirements.txt
+            torch-model-archiver --model-name $MODEL_NAME --serialized-file dummy_file.pth --version 1.0 --handler scripts/torchserve_vitxxsmall_handler.py --export-path model-store -r requirements.txt
             rm -f dummy_file.pth
             shift 2
             ;;
