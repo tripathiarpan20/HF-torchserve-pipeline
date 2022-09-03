@@ -1,3 +1,5 @@
+**NOTE:** This repository is [under integration](https://github.com/pytorch/serve/pull/1822) with the official Torchserver repo and is subject to heavy changes in the future. 
+
 # HF-torchserve-pipeline
  
 This repository contains an example to deploy models with third-party dependencies (like 🤗 Transformers, sparseml etc) on Torchserve servers as ready-for-usage Docker containers on cloud services like AWS.  
